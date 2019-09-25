@@ -14,7 +14,11 @@ class JokeList extends Component {
         this.state = { jokes: [] };
     };
 
-    async componentDidMount() {
+    componentDidMount() {
+        this.resetJokes();
+    };
+
+    async resetJokes () {
         let jokes = []
         while( jokes.length < this.props.numJokesToGet ) {
             let res = await axios.get("https://icanhazdadjoke.com/", {
@@ -23,8 +27,8 @@ class JokeList extends Component {
             jokes.push({ text: res.data.joke, votes: 0, id: uuid()});
         }
         this.setState({ jokes: jokes })
-    };
-
+    }
+ 
     handleVote(id, delta) {
         this.setState(st => ({
             jokes: st.jokes.map(j => 
@@ -32,8 +36,12 @@ class JokeList extends Component {
             )
         }));
     }
+
+    handleClick = () => {
+        this.resetJokes();
+    }
     render() {
-        const jokes = this.state.jokes.map(k => (
+        const jokes = this.state.jokes.map(j => (
             <Joke 
             key ={j.id} 
             votes={j.votes} 
@@ -42,8 +50,8 @@ class JokeList extends Component {
             downvote={() => this.handleVote(j.id, -1)}
         />
         ))
+
         return (
-            
             <div className ="JokeList">
                 <div className="JokeList-sidebar">
                     <h1 className= "JokeList-title">
@@ -51,7 +59,7 @@ class JokeList extends Component {
                     </h1>
                     <img src='https://assets.dryicons.com/uploads/icon/svg/8927/0eb14c71-38f2-433a-bfc8-23d9c99b3647.svg' />
                     <button className='JokeList-getmore' onClick={this.handleClick}>
-                        Fetch Jokes
+                        Get Jokes
                     </button>
                 </div>
 
